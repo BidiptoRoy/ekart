@@ -34,3 +34,9 @@ export const signup = async function (
     });
   }
 };
+
+export const signin = async function (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {};
