@@ -2,21 +2,14 @@ import { json, urlencoded } from "body-parser";
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
+import adminRouter from "./routes/adminRoutes";
 
-export const createServer = () => {
-  const app = express();
-  app
-    .disable("x-powered-by")
-    .use(morgan("dev"))
-    .use(urlencoded({ extended: true }))
-    .use(json())
-    .use(cors())
-    .get("/message/:name", (req, res) => {
-      return res.json({ message: `hello ${req.params.name}` });
-    })
-    .get("/healthz", (req, res) => {
-      return res.json({ ok: true });
-    });
+const app = express();
+app.use(morgan("dev"));
+app.use(cors());
+app.use(json());
+app.use(urlencoded({ extended: true }));
 
-  return app;
-};
+app.use("/admin", adminRouter);
+
+export default app;

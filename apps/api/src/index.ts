@@ -1,9 +1,18 @@
-import { createServer } from "./server";
-import { log } from "logger";
+import mongoose from "mongoose";
+import app from "./server";
+import dotenv from "dotenv";
+
+dotenv.config({ path: "./config.env" });
 
 const port = process.env.PORT || 5001;
-const server = createServer();
 
-server.listen(port, () => {
-  log(`api running on ${port}`);
+app.listen(port, () => {
+  console.log(`Server running on port ${port}...`);
 });
+
+const db = process.env.DATABASE;
+if (db) {
+  mongoose.connect(db).then(() => {
+    console.log("DB connected successfully");
+  });
+}
