@@ -1,7 +1,21 @@
 import mongoose from "mongoose";
-// import validator from "validator";
+import { Model, Schema, model } from "mongoose";
+import bcrypt from "bcrypt";
 
-const adminSchema = new mongoose.Schema({
+interface IAdmin {
+  name: string;
+  email: string;
+  password: string | undefined;
+  passwordConfirm: string | undefined;
+}
+
+interface IAdminMethods {
+  correctPassword(password1: string, password2: string): boolean;
+}
+
+type AdminModel = Model<IAdmin, {}, IAdminMethods>;
+
+const adminSchema = new Schema<IAdmin, AdminModel, IAdminMethods>({
   name: {
     type: String,
     required: [true, "admin must have a name"],
@@ -16,6 +30,7 @@ const adminSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, "password is required"],
+    select: false,
   },
   passwordConfirm: {
     type: String,
@@ -23,24 +38,22 @@ const adminSchema = new mongoose.Schema({
   },
 });
 
-// creating a test Admin
+adminSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  if (this.password === undefined) return next();
+  this.password = await bcrypt.hash(this.password, 12);
+  this.passwordConfirm = undefined;
+  next();
+});
 
-const Admin = mongoose.model("Admin", adminSchema);
+// this method is an instance method so it is available in all Admin documents
+adminSchema.method(
+  "correctPassword",
+  async function (candidatePassword: string, userPassword: string) {
+    return await bcrypt.compare(candidatePassword, userPassword);
+  }
+);
 
-// const testAdmin = new Admin({
-//   name: "Bidipto Roy",
-//   email: "bidipto@gmail.com",
-//   password: "pass1234",
-//   passwordConfirm: "pass1234",
-// });
-
-// testAdmin
-//   .save()
-//   .then((doc) => {
-//     console.log(doc);
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   });
+const Admin = model<IAdmin, AdminModel>("Admin", adminSchema);
 
 export default Admin;
