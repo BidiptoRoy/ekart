@@ -1,12 +1,14 @@
-import mongoose from "mongoose";
-import { Model, Schema, model } from "mongoose";
+// import mongoose from "mongoose";
+import mongoose, { Model, Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
+import { ObjectId } from "mongodb";
 
 interface IAdmin {
   name: string;
   email: string;
   password: string | undefined;
   passwordConfirm: string | undefined;
+  // products: [ObjectId];
 }
 
 interface IAdminMethods {
@@ -36,6 +38,7 @@ const adminSchema = new Schema<IAdmin, AdminModel, IAdminMethods>({
     type: String,
     required: [true, "confirm your password"],
   },
+  // products: [{ type: mongoose.Schema.ObjectId, ref: "Product" }],
 });
 
 adminSchema.pre("save", async function (next) {
