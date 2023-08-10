@@ -1,6 +1,6 @@
 // import mongoose from "mongoose";
 import mongoose, { Model, Schema, model } from "mongoose";
-import bcrypt from "bcrypt";
+const bcrypt = require("bcrypt");
 import { ObjectId } from "mongodb";
 
 interface IAdmin {

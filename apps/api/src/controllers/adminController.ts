@@ -77,7 +77,7 @@ export const updateProduct = catchAsync(async function (
 ) {
   const parsedInput = updateProductInput.safeParse(req.body);
   if (!parsedInput.success)
-    return next(new AppError(parsedInput.error.message, 401));
+    return next(new AppError("Provide correct Input", 401));
 
   const product = await Product.findById(req.params.productId);
   if (!product || !req.headers.userId)

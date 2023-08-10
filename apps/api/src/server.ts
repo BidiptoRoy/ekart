@@ -1,7 +1,7 @@
 import { json, urlencoded } from "body-parser";
-import express from "express";
-import morgan from "morgan";
-import cors from "cors";
+const express = require("express");
+const morgan = require("morgan");
+const cors = require("cors");
 import adminRouter from "./routes/adminRoutes";
 
 const app = express();

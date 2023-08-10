@@ -2,7 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import Admin from "../models/adminModel";
 import { z } from "zod";
 import { Document, ObjectId } from "mongodb";
-import jwt, { JwtPayload, decode } from "jsonwebtoken";
+import { JwtPayload, decode } from "jsonwebtoken";
+const jwt = require("jsonwebtoken");
 import AppError from "../utils/appError";
 import { catchAsync } from "../utils/catchAsync";
 
@@ -51,7 +52,7 @@ export const signup = async function (
     if (!parsedInput.success) {
       res.status(400).json({
         status: "Failed",
-        message: parsedInput.error.message,
+        message: "Provide correct input",
       });
       return;
     }
@@ -75,7 +76,7 @@ export const signin = async function (
     if (!parsedInput.success) {
       res.status(400).json({
         status: "Failed",
-        message: parsedInput.error.message,
+        message: "provide correct input",
       });
       return;
     }
