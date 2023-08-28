@@ -3,7 +3,7 @@ import app from "./server";
 import { config } from "dotenv";
 
 config({
-  path: "./../../config.env",
+  path: "./../../.env",
 });
 
 const port = process.env.PORT || 5001;
@@ -15,6 +15,6 @@ app.listen(port, () => {
 const db = process.env.DATABASE;
 if (db) {
   mongoose.connect(db).then(() => {
-    console.log("DB connected successfully");
+    console.log("DB connected successfully yay");
   });
 }
