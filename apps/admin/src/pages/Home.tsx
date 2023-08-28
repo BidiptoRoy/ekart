@@ -1,79 +1,76 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AppBar from "../ui/AppBar";
 import ProductCard from "../ui/ProductCard";
+import { useRecoilValue } from "recoil";
+import {
+  userEmailState,
+  userIsLoadingState,
+} from "../store/selectors/userDetails";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import Loader from "../ui/Loader";
 
 export interface Product {
   name: string;
   description: string;
   image: string;
   price: Number;
-  id: number;
+  _id: number;
 }
 
-const products: Product[] = [
-  {
-    id: 1,
-    name: "Icecream",
-    description: "Cool and sweet for the people who are sweet",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Ice_cream_with_whipped_cream%2C_chocolate_syrup%2C_and_a_wafer_%28cropped%29.jpg/1200px-Ice_cream_with_whipped_cream%2C_chocolate_syrup%2C_and_a_wafer_%28cropped%29.jpg",
-    price: 99,
-  },
-  {
-    id: 2,
-    name: "Icecream",
-    description: "Cool and sweet for the people who are sweet",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Ice_cream_with_whipped_cream%2C_chocolate_syrup%2C_and_a_wafer_%28cropped%29.jpg/1200px-Ice_cream_with_whipped_cream%2C_chocolate_syrup%2C_and_a_wafer_%28cropped%29.jpg",
-    price: 99,
-  },
-  {
-    id: 3,
-    name: "Icecream",
-    description: "Cool and sweet for the people who are sweet",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Ice_cream_with_whipped_cream%2C_chocolate_syrup%2C_and_a_wafer_%28cropped%29.jpg/1200px-Ice_cream_with_whipped_cream%2C_chocolate_syrup%2C_and_a_wafer_%28cropped%29.jpg",
-    price: 99,
-  },
-  {
-    id: 4,
-    name: "Icecream",
-    description: "Cool and sweet for the people who are sweet",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Ice_cream_with_whipped_cream%2C_chocolate_syrup%2C_and_a_wafer_%28cropped%29.jpg/1200px-Ice_cream_with_whipped_cream%2C_chocolate_syrup%2C_and_a_wafer_%28cropped%29.jpg",
-    price: 99,
-  },
-  {
-    id: 5,
-    name: "Icecream",
-    description: "Cool and sweet for the people who are sweet",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Ice_cream_with_whipped_cream%2C_chocolate_syrup%2C_and_a_wafer_%28cropped%29.jpg/1200px-Ice_cream_with_whipped_cream%2C_chocolate_syrup%2C_and_a_wafer_%28cropped%29.jpg",
-    price: 99,
-  },
-];
-
 function Home() {
+  const userEmail = useRecoilValue(userEmailState);
+  const isUserLoading = useRecoilValue(userIsLoadingState);
+  const navigate = useNavigate();
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(
+    function () {
+      if (userEmail === "null" && isUserLoading === false) navigate("/signin");
+    },
+    [userEmail, isUserLoading, navigate]
+  );
+
+  useEffect(function () {
+    const getProducts = async function () {
+      setIsLoading(true);
+      const token = localStorage.getItem("token");
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+      const res = await axios.get("http://localhost:5001/admin/home", {
+        headers,
+      });
+      setProducts(res.data.data);
+      setIsLoading(false);
+    };
+    getProducts();
+  }, []);
+
   return (
-    <div className="bg-slate-200 h-screen">
-      <AppBar />
-      <div className="flex flex-col mt-20">
-        <Link
-          to="/addNewProduct"
-          className="rounded bg-stone-400 p-2 mt-2 ml-2 w-48 font-semibold"
-        >
-          &#10133; Add New Product
-        </Link>
-        <div className=" w-[32rem] mx-auto px-5">
-          <h2 className="text-xl font-semibold mt-4">Your products</h2>
-          <ul>
-            {products.map((el) => (
-              <ProductCard element={el} key={el.id} />
-            ))}
-          </ul>
+    <>
+      {isLoading && <Loader />}
+      <div className="bg-slate-200 h-screen">
+        <AppBar />
+        <div className="flex flex-col mt-20">
+          <Link
+            to="/addNewProduct"
+            className="rounded bg-stone-400 p-2 mt-2 ml-2 w-48 font-semibold"
+          >
+            &#10133; Add New Product
+          </Link>
+          <div className=" w-[32rem] mx-auto px-5">
+            <h2 className="text-xl font-semibold mt-4">Your products</h2>
+            <ul className="my-2">
+              {products.map((el: Product) => (
+                <ProductCard element={el} key={el._id} />
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

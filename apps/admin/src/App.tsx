@@ -4,12 +4,8 @@ import Signup from "./pages/Signup";
 import Home from "./pages/Home";
 import UpdateProduct from "./pages/UpdateProduct";
 import AddNewProduct from "./pages/AddNewProduct";
-import { useSetRecoilState } from "recoil";
-import { userState } from "./store/atoms/user";
 
 function App() {
-  const setUser = useSetRecoilState(userState);
-
   return (
     <BrowserRouter>
       <Routes>

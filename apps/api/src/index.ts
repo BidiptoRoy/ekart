@@ -2,7 +2,9 @@ import mongoose from "mongoose";
 import app from "./server";
 import { config } from "dotenv";
 
-config({ path: "./config.env" });
+config({
+  path: "./../../config.env",
+});
 
 const port = process.env.PORT || 5001;
 
